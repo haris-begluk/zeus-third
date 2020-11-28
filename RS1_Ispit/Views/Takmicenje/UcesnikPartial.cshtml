@@ -1,0 +1,25 @@
+﻿@model RS1_Ispit_asp.net_core.ViewModels.UcesnikVM
+
+@{
+    ViewData["Title"] = "UcesnikPartial";
+}
+
+<h2>Edit Ucesnika</h2>
+<div class="row">
+    <div class="col-md-4">
+        <form  asp-action="EditUcesnik">
+            <input asp-for="TakmicenjeId" hidden />
+            <div class="form-group">
+                <label asp-for="UcesnikId" class="control-label">Ucesnik</label>
+                <select asp-for="UcesnikId" asp-items="@Model.Ucesnici.Select(s => new SelectListItem { Value = s.Id, Text = s.Naziv})" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Bodovi" class="control-label"></label>
+                <input asp-for="Bodovi" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Snimi" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

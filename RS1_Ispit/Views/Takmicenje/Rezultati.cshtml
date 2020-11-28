@@ -1,0 +1,133 @@
+﻿@model RS1_Ispit_asp.net_core.ViewModels.RezultatiVM
+
+@{
+    ViewData["Title"] = "Rezultati";
+}
+<style>
+    dd, dt {
+        font-size: 20px !important;
+    }
+
+    dt {
+        text-align: left !important;
+    }
+</style>
+<div class="row">
+
+    <div>
+        <dl class="dl-horizontal size">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Skola)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Skola)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Predmet)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Predmet)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Razred)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Razred)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Datum)
+            </dt>
+            <dd>
+                @Model.Datum.ToString("dd.MM.yyyy")
+            </dd>
+            <dt><button id="zakljucaj" ajax-poziv="da" ajax-url="/Takmicenje/Zakljucaj?id=@Model.TakmicenjeId" ajax-rezultat="none" class="btn @(Model.Zakljucaj?"btn-primary":"btn-danger")">@(Model.Zakljucaj?"Otkljucaj":"Zakljucaj")</button></dt>
+        </dl>
+    </div>
+    @if (!Model.Zakljucaj)
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Odjeljenje
+                    </th>
+                    <th>
+                        Broj u dnevniku
+                    </th>
+                    <th>
+                        Pristupio
+                    </th>
+                    <th>
+                        Rezultat Bodovi(Max 100)
+                    </th>
+                    <th>Akcija</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Rezultati)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Odjeljenje)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BrojUDnevniku)
+                        </td>
+                        <td>
+                            <a ajax-poziv="da" href="/Takmicenje/Pristupio?id=@item.UcesnikId" ajax-rezultat="none" class="pristupio" style="text-decoration:none; color:white; background-color:@(item.Pristupio?"Green":"Red");">@(item.Pristupio?"DA":"NE")</a>
+                        </td>
+                        <td>
+                            @if (item.Bodovi != null && item.Pristupio)
+                            {
+                                <input type="number" min="0" max="100" class="bodovi" id="@item.UcesnikId" value="@item.Bodovi" />
+                            }
+                            else
+                            {
+                                <span>X</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Pristupio)
+                            {
+                                <a ajax-poziv="da" href="/Takmicenje/EditUcesnik?id=@item.UcesnikId" ajax-rezultat="editUcesnik" style="text-decoration:none; font-weight:bold;">Uredi</a>
+
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+       <button  ajax-poziv="da" ajax-url="/Takmicenje/DodajUcesnik?id=@Model.TakmicenjeId" ajax-rezultat="editUcesnik" class="btn btn-primary">Dodaj Ucesnika</button>
+
+        <div id="editUcesnik"></div>
+    }
+
+</div>
+<script>
+    $(".pristupio").mouseup(function () {
+        setTimeout(function () {
+            window.location.reload();
+        }, 1000);
+    });
+    $("#zakljucaj").mouseup(function () {
+        setTimeout(function () {
+            window.location.reload();
+        }, 1000);
+    });
+    $(".bodovi").keyup(function (event) {
+        setTimeout(function () {
+
+            $.ajax({
+                type: "GET",
+                url: "/Takmicenje/EditBodovi?id=" + event.target.id + "&bodovi=" + event.target.value,
+                success: function () {
+                    window.location.reload();
+                }
+            });
+
+        }, 500);
+
+    });
+
+</script>
